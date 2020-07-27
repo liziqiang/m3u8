@@ -7,11 +7,18 @@ import (
 	"time"
 )
 
-func Get(url string) (io.ReadCloser, error) {
+func Get(url string, header http.Header) (io.ReadCloser, error) {
 	c := http.Client{
 		Timeout: time.Duration(60) * time.Second,
 	}
-	resp, err := c.Get(url)
+	request, err := http.NewRequest("GET", url, nil)
+	if header != nil {
+		request.Header = header
+	}
+	if err != nil {
+		return nil, err
+	}
+	resp, err := c.Do(request)
 	if err != nil {
 		return nil, err
 	}

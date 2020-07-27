@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -29,13 +30,14 @@ type Downloader struct {
 	tsFolder string
 	finish   int32
 	segLen   int
+	fileName string
 
 	result *parse.Result
 }
 
 // NewTask returns a Task instance
-func NewTask(output string, url string) (*Downloader, error) {
-	result, err := parse.FromURL(url)
+func NewTask(output string, url string, fileName string, header http.Header) (*Downloader, error) {
+	result, err := parse.FromURL(url, header)
 	if err != nil {
 		return nil, err
 	}
@@ -61,6 +63,10 @@ func NewTask(output string, url string) (*Downloader, error) {
 		folder:   folder,
 		tsFolder: tsFolder,
 		result:   result,
+		fileName: mergeTSFilename,
+	}
+	if fileName != "" {
+		d.fileName = fileName
 	}
 	d.segLen = len(result.M3u8.Segments)
 	d.queue = genSlice(d.segLen)
@@ -68,7 +74,7 @@ func NewTask(output string, url string) (*Downloader, error) {
 }
 
 // Start runs downloader
-func (d *Downloader) Start(concurrency int) error {
+func (d *Downloader) Start(concurrency int, header http.Header) error {
 	var wg sync.WaitGroup
 	// struct{} zero size
 	limitChan := make(chan struct{}, concurrency)
@@ -83,7 +89,7 @@ func (d *Downloader) Start(concurrency int) error {
 		wg.Add(1)
 		go func(idx int) {
 			defer wg.Done()
-			if err := d.download(idx); err != nil {
+			if err := d.download(idx, header); err != nil {
 				// Back into the queue, retry request
 				fmt.Printf("[failed] %s\n", err.Error())
 				if err := d.back(idx); err != nil {
@@ -101,10 +107,10 @@ func (d *Downloader) Start(concurrency int) error {
 	return nil
 }
 
-func (d *Downloader) download(segIndex int) error {
+func (d *Downloader) download(segIndex int, header http.Header) error {
 	tsFilename := tsFilename(segIndex)
 	tsUrl := d.tsURL(segIndex)
-	b, e := tool.Get(tsUrl)
+	b, e := tool.Get(tsUrl, header)
 	if e != nil {
 		return fmt.Errorf("request %s, %s", tsUrl, e.Error())
 	}
@@ -202,7 +208,7 @@ func (d *Downloader) merge() error {
 	}
 
 	// Create a TS file for merging, all segment files will be written to this file.
-	mFilePath := filepath.Join(d.folder, mergeTSFilename)
+	mFilePath := filepath.Join(d.folder, d.fileName)
 	mFile, err := os.Create(mFilePath)
 	if err != nil {
 		return fmt.Errorf("create main TS file failed：%s", err.Error())
