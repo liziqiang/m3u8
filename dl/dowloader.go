@@ -11,8 +11,8 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/oopsguy/m3u8/parse"
-	"github.com/oopsguy/m3u8/tool"
+	"github.com/sudot/m3u8/parse"
+	"github.com/sudot/m3u8/tool"
 )
 
 const (

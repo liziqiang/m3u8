@@ -19,7 +19,7 @@ M3U8 是一个使用了 Go 语言编写的迷你 M3U8 下载工具。你只需�
 
 指定下载文件并下载到指定目录
 ```bash
-go run main.go -u=http://example.com/index.m3u8 -o=/data/example
+go run main.go -u=http://example.com/index.m3u8 -o=data/example
 ```
 
 指定下载文件并下载到当前目录下的out目录中
@@ -29,7 +29,7 @@ go run main.go -u=http://example.com/index.m3u8
 
 读取文件中的链接批量下载下载到指定目录
 ```bash
-go run main.go -f=data/test.txt -o=/data/example
+go run main.go -f=data/test.txt -o=data/example
 ```
 
 读取文件中的链接批量下载下载到当前目录下的out目录中
@@ -41,7 +41,7 @@ go run main.go -f=data/test.txt
 Linux 和 MacOS
 
 ```
-./m3u8 -u=http://example.com/index.m3u8 -o=/data/example
+./m3u8 -u=http://example.com/index.m3u8 -o=data/example
 ```
 
 Windows PowerShell

@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/oopsguy/m3u8/dl"
-	"github.com/oopsguy/m3u8/parse"
+	"github.com/sudot/m3u8/dl"
+	"github.com/sudot/m3u8/parse"
 	"io/ioutil"
 	"os"
 	"regexp"
@@ -17,18 +17,24 @@ var (
 	headers  string
 	output   string
 	chanSize int
+	help     bool
 )
 
 func init() {
+	flag.BoolVar(&help, "h", false, "查看命令帮助")
 	flag.StringVar(&url, "u", "", "M3U8 URL, url 和 file 必须至少有一个")
 	flag.StringVar(&file, "f", "data\\test.txt", "M3U8 URL and Headers files, url 和 file 必须至少有一个")
-	flag.StringVar(&headers, "h", "", "Headers, 若 file 中也有 Headers,则此 Headers 会附加在 file 中的 Headers 后面")
+	flag.StringVar(&headers, "headers", "", "Headers, 若 file 中也有 Headers,则此 Headers 会附加在 file 中的 Headers 后面")
 	flag.IntVar(&chanSize, "c", 25, "Maximum number of occurrences")
 	flag.StringVar(&output, "o", "./out", "Output folder, 默认输出到当前目录下的 out 目录中")
 }
 
 func main() {
 	flag.Parse()
+	if help {
+		flag.Usage()
+		return
+	}
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println("[error]", r)
