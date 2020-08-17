@@ -54,30 +54,16 @@ Windows PowerShell
 
 ```
 -c int
-        Maximum number of occurrences (default 25)
-  -f string
-        M3U8 URL and Headers files, url 和 file 必须至少有一个 (default "data\\test.txt")
-  -h    查看命令帮助
-  -headers string
-        Headers, 若 file 中也有 Headers,则此 Headers 会附加在 file 中的 Headers 后面
-  -o string
-        Output folder, 默认输出到当前目录下的 out 目录中 (default "./out")
-  -u string
-        M3U8 URL, url 和 file 必须至少有一个
-tangjialindeMacBook-Pro:m3u8 tangjialin$ clear
-tangjialindeMacBook-Pro:m3u8 tangjialin$ go run main.go -h
-Usage of /var/folders/jy/bmdy94dx1s92n1v51gxjc5qh0000gn/T/go-build993400945/b001/exe/main:
-  -c int
-        下载协程并发数 (default 25)
-  -f string
-        M3U8 URL and Headers files, url 和 file 必须至少有一个 (default "data\\test.txt")
-  -h    查看命令帮助
-  -headers string
-        请求需要携带的头信息, 若 file 中也有 Headers,则此 Headers 会附加在 file 中的 Headers 后面
-  -o string
-        文件保存目录, 默认输出到当前目录下的 out 目录中 (default "./out")
-  -u string
-        M3U8 地址, url 和 file 必须至少有一个
+    下载协程并发数 (default 25)
+-f string
+    M3U8 URL and Headers files, url 和 file 必须至少有一个 (default "data\\test.txt")
+-h    查看命令帮助
+-headers string
+    请求需要携带的头信息, 若 file 中也有 Headers,则此 Headers 会附加在 file 中的 Headers 后面
+-o string
+    文件保存目录, 默认输出到当前目录下的 out 目录中 (default "./out")
+-u string
+    M3U8 地址, url 和 file 必须至少有一个
 ```
 
 部分链接可能限制请求频率，可根据实际情况调整 `c` 参数的值。
