@@ -23,7 +23,7 @@ var (
 func init() {
 	flag.BoolVar(&help, "h", false, "查看命令帮助")
 	flag.StringVar(&url, "u", "", "M3U8 地址, url 和 file 必须至少有一个")
-	flag.StringVar(&file, "f", "data\\test.txt", "M3U8 URL and Headers files, url 和 file 必须至少有一个")
+	flag.StringVar(&file, "f", "", "M3U8 URL and Headers files, url 和 file 必须至少有一个")
 	flag.StringVar(&headers, "headers", "", "请求需要携带的头信息, 若 file 中也有 Headers,则此 Headers 会附加在 file 中的 Headers 后面")
 	flag.IntVar(&chanSize, "c", 25, "下载协程并发数")
 	flag.StringVar(&output, "o", "./out", "文件保存目录, 默认输出到当前目录下的 out 目录中")
