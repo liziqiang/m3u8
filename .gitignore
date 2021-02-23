@@ -17,6 +17,7 @@
 # vendor/
 
 .idea
-m3u8
+m3u8*
 /test
 /out
+.DS_Store
