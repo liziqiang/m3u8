@@ -75,6 +75,7 @@ func NewTask(output string, url string, fileName string, header http.Header) (*D
 
 // Start runs downloader
 func (d *Downloader) Start(concurrency int, header http.Header) error {
+	fmt.Printf("\n[downloading] %s total:%d\n", d.result.URL, d.segLen)
 	var wg sync.WaitGroup
 	// struct{} zero size
 	limitChan := make(chan struct{}, concurrency)
@@ -91,7 +92,7 @@ func (d *Downloader) Start(concurrency int, header http.Header) error {
 			defer wg.Done()
 			if err := d.download(idx, header); err != nil {
 				// Back into the queue, retry request
-				fmt.Printf("[failed] %s\n", err.Error())
+				fmt.Printf("\n[failed] %s\n", err.Error())
 				if err := d.back(idx); err != nil {
 					fmt.Printf(err.Error())
 				}
@@ -101,6 +102,7 @@ func (d *Downloader) Start(concurrency int, header http.Header) error {
 		limitChan <- struct{}{}
 	}
 	wg.Wait()
+	fmt.Println()
 	if err := d.merge(); err != nil {
 		return err
 	}
@@ -160,8 +162,7 @@ func (d *Downloader) download(segIndex int, header http.Header) error {
 	}
 	// Maybe it will be safer in this way...
 	atomic.AddInt32(&d.finish, 1)
-	//tool.DrawProgressBar("Downloading", float32(d.finish)/float32(d.segLen), progressWidth)
-	fmt.Printf("[download %6.2f%%] %s\n", float32(d.finish)/float32(d.segLen)*100, tsUrl)
+	tool.DrawProgressBar("download", float32(d.finish)/float32(d.segLen), progressWidth, tsFilename)
 	return nil
 }
 
