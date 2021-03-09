@@ -46,6 +46,7 @@ func FromURL(link string, header http.Header) (*Result, error) {
 		Keys: make(map[int]string),
 	}
 
+	urlKeyMap := make(map[string]string)
 	for idx, key := range m3u8.Keys {
 		switch {
 		case key.Method == "" || key.Method == CryptMethodNONE:
@@ -54,17 +55,22 @@ func FromURL(link string, header http.Header) (*Result, error) {
 			// Request URL to extract decryption key
 			keyURL := key.URI
 			keyURL = tool.ResolveURL(u, keyURL)
-			resp, err := tool.Get(keyURL, header)
-			if err != nil {
-				return nil, fmt.Errorf("extract key failed: %s", err.Error())
+			value := urlKeyMap[keyURL]
+			if value == "" {
+				resp, err := tool.Get(keyURL, header)
+				if err != nil {
+					return nil, fmt.Errorf("extract key failed: %s", err.Error())
+				}
+				keyByte, err := ioutil.ReadAll(resp)
+				_ = resp.Close()
+				if err != nil {
+					return nil, err
+				}
+				value = string(keyByte)
+				urlKeyMap[keyURL] = value
+				fmt.Println("decryption key: ", value)
 			}
-			keyByte, err := ioutil.ReadAll(resp)
-			_ = resp.Close()
-			if err != nil {
-				return nil, err
-			}
-			fmt.Println("decryption key: ", string(keyByte))
-			result.Keys[idx] = string(keyByte)
+			result.Keys[idx] = value
 		default:
 			return nil, fmt.Errorf("unknown or unsupported cryption method: %s", key.Method)
 		}
